@@ -8,7 +8,7 @@ require("dotenv").config();
 require("./db/db"); //db
 app.use(express.json());
 app.use(cors({
-    origin: ['http://localhost:3000']
+    origin: ['http://localhost:3000',"https://sameer-blog-app.herokuapp.com/"]
 }));
 
 app.use('/api/images',express.static(path.join(__dirname,"images")));
@@ -18,6 +18,11 @@ const userRoute = require("./Routes/User");
 const Posts = require("./Routes/Posts");
 const Category = require("./Routes/Category");
 const UploadImage = require("./UploadImage");
+
+app.use(express.static(path.join(__dirname, './build')))
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './build'))
+})
 
 //routes
 app.use("/api/auth",auth);
