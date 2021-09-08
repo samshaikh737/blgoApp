@@ -12,11 +12,11 @@ router.get("/", async (req, res) => {
 
     try {
         if (user) {
-            const author = await User.findOne({username: user});
-            posts = await Post.find({user: author?._id}); 
-        }else if(category){
-            posts = await Post.find({ category : { $in : [category] } });
-        }else {
+            const author = await User.findOne({ username: user });
+            posts = await Post.find({ user: author?._id });
+        } else if (category) {
+            posts = await Post.find({ category: { $in: [category] } });
+        } else {
             posts = await Post.find();
         }
         res.send(posts)
@@ -27,26 +27,26 @@ router.get("/", async (req, res) => {
 
 });
 
-//get Post
+//udate Post
 router.get("/:id", async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        if(!post) return res.status(400).send({"error":"Post Not Found"});
+        if (!post) return res.status(400).send({ "error": "Post Not Found" });
         return res.json(post);
     } catch (error) {
-        res.status(400).send({"error":"Post Not Found"});
+        res.status(400).send({ "error": "Post Not Found" });
     }
 });
 
 //add post
 router.post("/", addPostMidd, async (req, res) => {
-    const newPost = await new Post(req.body).save();
+    const newPost = await new Post({ ...req.body, "username": req.username }).save();
     res.send(newPost);
 });
 
 //update post
 router.put("/:id", updatePostMidd, async (req, res) => {
-    const updatePost = await Post.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    const updatePost = await Post.findByIdAndUpdate(req.params.id, { $set: { ...req.body, "username": req.username } }, { new: true });
     res.send(updatePost);
 });
 

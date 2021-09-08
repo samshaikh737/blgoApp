@@ -9,8 +9,8 @@ const loginAuth = async (req, res, next) => {
     if (error) return res.status(400).json({ 'error': error.message });
 
     // //check user already exists
-    const user = await User.findOne({ "username": req.body.username });
-    if (!user) return res.status(400).json({ "error": "Username not found" });
+    const user = await User.findOne({ "email": req.body.email });
+    if (!user) return res.status(400).json({ "error": "Email not found" });
 
     const checkPassword = await bcrypt.compare(req.body.password, user.password);
     if (!checkPassword) return res.status(400).json({ "error": "password is worng" });

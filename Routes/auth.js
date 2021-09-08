@@ -19,7 +19,7 @@ router.post("/register", registerAuth, async (req, res, next) => {
         const { password, ...other } = newUser._doc;
         res.send(other);
     } catch (error) {
-        res.status(400).send(error)
+        res.status(204).send(error)
     }
 
 });

@@ -6,7 +6,8 @@ const userValidation = (data) => {
         "id": Joi.string().required(),
         "username": Joi.string().min(3),
         "email": Joi.string().min(3).email(),
-        "password": Joi.string().min(6)
+        "password": Joi.string().min(6),
+        "profilePic": Joi.string()
     }
 
     //Lets Validate the data before we a user
@@ -33,4 +34,4 @@ const userDeleteValidation = (data) => {
 
 
 
-module.exports = {userValidation ,userDeleteValidation};
+module.exports = { userValidation, userDeleteValidation };

@@ -5,7 +5,8 @@ const registerUserValidation = (data) =>{
     const schema = {
         "username": Joi.string().min(3).required(),
         "email": Joi.string().min(3).required().email(),
-        "password": Joi.string().min(6).required()
+        "password": Joi.string().min(6).required(),
+        "profilePic": Joi.string(),
     }
     
     //Lets Validate the data before we a user
@@ -19,7 +20,7 @@ const registerUserValidation = (data) =>{
 const loginUserValidation = (data) =>{
     
     const schema = {
-        "username": Joi.string().min(3).required(),
+        "email": Joi.string().min(3).required(),
         "password": Joi.string().min(6).required()
     }
     

@@ -10,9 +10,7 @@ const addPostMidd = async (req, res, next) => {
         const user = await User.findById(req.body.user);
         if (!user) return res.status(400).send({ "error": "user not found Can't post " });
 
-        const checkPost = await Post.findOne({ title: req.body.title });
-        if (checkPost) return res.status(400).send({ "error": "Title already exites please try new title" });
-
+        req.username = user.username;
     } catch (error) {
         return res.status(400).send({ "error": "user not found Can't post " })
     }
@@ -37,9 +35,7 @@ const updatePostMidd = async (req, res, next) => {
             return res.status(400).send({ "error": "You can update your Post" });
         }
 
-        const checkPost = await Post.findOne({ title: req.body.title });
-        if (checkPost) return res.status(400).send({ "error": "Title already exites please try new title" });
-
+        req.username = user.username;
     } catch (error) {
         return res.status(400).send({ "error": "user not found Can't update " })
     }

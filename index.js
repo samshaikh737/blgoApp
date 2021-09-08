@@ -1,9 +1,17 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
+const cors = require("cors");
+const path = require("path");
+
 require("dotenv").config();
 require("./db/db"); //db
 app.use(express.json());
+app.use(cors({
+    origin: ['http://localhost:3000']
+}));
+
+app.use('/api/images',express.static(path.join(__dirname,"images")));
 
 const auth = require("./Routes/auth");
 const userRoute = require("./Routes/User");
