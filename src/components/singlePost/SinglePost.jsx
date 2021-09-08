@@ -1,64 +1,86 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 import "./singlePost.css";
 
+import { Database } from "../../OwnRedux/Provider";
+import axios from "axios";
+
 export default function SinglePost() {
+
+  const location = useHistory();
+  let postKey = location.location.pathname.split("/")[2];
+  const url = process.env.REACT_APP_SERVER_URL;
+
+  const [post, setpost] = useState(null);
+  const [db, updateDb] = Database();
+
+  const getSinglePost = async () => {
+    const fetchSinglePost = await axios.get(`${url}/posts/${postKey}`);
+    if (fetchSinglePost.status == 200) return setpost(fetchSinglePost.data);
+  }
+
+
+  const handlePostDelete = async () => {
+
+    const warning = prompt("Enter yes to delte Post");
+    if (warning?.trim() !== "yes") return;
+
+    let deletePost = await fetch(`${url}/posts/${post?._id}`, {
+      method: "delete",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ "id": post?._id, "user": db.user?._id })
+    });
+
+    if (deletePost.status == 400) {
+      let err = await deletePost.json();
+      if (err.error) return alert(err.error);
+    }
+
+    let res = await deletePost.text();
+    alert(res);
+    location.push("/")
+  }
+
+  useEffect(() => {
+    getSinglePost();
+  }, [])
+
   return (
     <div className="singlePost">
-      <div className="singlePostWrapper">
-        <img
-          className="singlePostImg"
-          src="https://images.pexels.com/photos/6685428/pexels-photo-6685428.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-          alt=""
-        />
+      {post && <div className="singlePostWrapper">
+        {
+          post?.photo ? <img className="singlePostImg"
+            src={post?.photo}
+            alt=""
+          />
+            : <div className="singlePostImg" />
+        }
         <h1 className="singlePostTitle">
-          Lorem ipsum dolor
-          <div className="singlePostEdit">
-            <i className="singlePostIcon far fa-edit"></i>
-            <i className="singlePostIcon far fa-trash-alt"></i>
-          </div>
+          {post?.title}
+          {
+            db.user?.username == post?.username && <div className="singlePostEdit">
+              <i className="singlePostIcon far fa-edit" onClick={() => location.push(`/write/${post?._id}`)}></i>
+              <i className="singlePostIcon far fa-trash-alt" onClick={handlePostDelete} > </i>
+            </div>
+          }
+
         </h1>
         <div className="singlePostInfo">
           <span>
             Author:
             <b className="singlePostAuthor">
-              <Link className="link" to="/posts?username=Safak">
-                Safak
+              <Link className="link" to={`/posts?user=${post?.username}`}>
+                {post?.username}
               </Link>
             </b>
           </span>
-          <span>1 day ago</span>
+          <span>{new Date(post?.createdAt).toDateString()}</span>
         </div>
-        <p className="singlePostDesc">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste error
-          quibusdam ipsa quis quidem doloribus eos, dolore ea iusto impedit!
-          Voluptatum necessitatibus eum beatae, adipisci voluptas a odit modi
-          eos! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste
-          error quibusdam ipsa quis quidem doloribus eos, dolore ea iusto
-          impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas a
-          odit modi eos! Lorem, ipsum dolor sit amet consectetur adipisicing
-          elit. Iste error quibusdam ipsa quis quidem doloribus eos, dolore ea
-          iusto impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas
-          a odit modi eos! Lorem, ipsum dolor sit amet consectetur adipisicing
-          elit. Iste error quibusdam ipsa quis quidem doloribus eos, dolore ea
-          iusto impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas
-          a odit modi eos! Lorem, ipsum dolor sit amet consectetur adipisicing
-          elit. Iste error quibusdam ipsa quis quidem doloribus eos, dolore ea
-          iusto impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas
-          a odit modi eos!
-          <br />
-          <br />
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste error
-          quibusdam ipsa quis quidem doloribus eos, dolore ea iusto impedit!
-          Voluptatum necessitatibus eum beatae, adipisci voluptas a odit modi
-          eos! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste
-          error quibusdam ipsa quis quidem doloribus eos, dolore ea iusto
-          impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas a
-          odit modi eos! Lorem, ipsum dolor sit amet consectetur adipisicing
-          elit. Iste error quibusdam ipsa quis quidem doloribus eos, dolore ea
-          iusto impedit! Voluptatum necessitatibus eum beatae, adipisci voluptas
-          a odit modi eos! Lorem, ipsum dolor sit amet consectetur.
-        </p>
+        <p className="singlePostDesc"> {post?.desc} </p>
       </div>
+      }
     </div>
   );
 }

@@ -1,8 +1,17 @@
 import { Link } from "react-router-dom";
 import "./topbar.css";
 
+import { Database } from "../../OwnRedux/Provider";
+
 export default function Topbar() {
-  const user = true;
+  const [{ user }, updateUser] = Database();
+
+  console.log(user);
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    updateUser({ type: "ADD_USER", data: null });
+  }
+
   return (
     <div className="top">
       <div className="topLeft">
@@ -25,7 +34,7 @@ export default function Topbar() {
               WRITE
             </Link>
           </li>
-          {user && <li className="topListItem">LOGOUT</li>}
+          {user && <li className="topListItem" onClick={handleLogout} >LOGOUT</li>}
         </ul>
       </div>
       <div className="topRight">
@@ -33,7 +42,7 @@ export default function Topbar() {
           <Link className="link" to="/settings">
             <img
               className="topImg"
-              src="https://images.pexels.com/photos/1858175/pexels-photo-1858175.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+              src={user.profilePic ? user.profilePic : "https://images.pexels.com/photos/1858175/pexels-photo-1858175.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"}
               alt=""
             />
           </Link>
