@@ -7,9 +7,7 @@ const path = require("path");
 require("dotenv").config();
 require("./db/db"); //db
 app.use(express.json());
-app.use(cors({
-    origin: ['http://localhost:3000',"https://sameer-blog-app.herokuapp.com/"]
-}));
+app.use(cors());
 
 app.use('/api/images',express.static(path.join(__dirname,"images")));
 
